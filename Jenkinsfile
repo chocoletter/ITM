@@ -5,6 +5,10 @@ pipeline {
         githubPush()
     }
 
+    environment {
+        APP_URL = 'http://localhost:5000'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -41,14 +45,25 @@ pipeline {
                 }
             }
         }
+
+        stage('Run App') {
+            steps {
+                dir('frontend\\EasyDevOps\\publish') {
+                    bat """
+                    set ASPNETCORE_URLS=${APP_URL}
+                    start /B dotnet WebApplication3.dll
+                    """
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo 'Frontend build succesvol afgerond.'
+            echo 'Frontend build en start succesvol afgerond.'
         }
         failure {
-            echo 'Frontend build mislukt.'
+            echo 'Frontend build of start mislukt.'
         }
     }
 }
