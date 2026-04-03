@@ -26,6 +26,18 @@ pipeline {
             }
         }
 
+        stage('Security Test') {
+            steps {
+                dir('frontend\\EasyDevOps') {
+                    bat '''
+                    if exist security-report.txt del security-report.txt
+                    dotnet list WebApplication3.csproj package --vulnerable --include-transitive > security-report.txt
+                    type security-report.txt
+                    '''
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 dir('frontend\\EasyDevOps') {
@@ -66,10 +78,10 @@ pipeline {
 
     post {
         success {
-            echo 'Frontend build en start succesvol afgerond.'
+            echo 'Frontend build, security test en start succesvol afgerond.'
         }
         failure {
-            echo 'Frontend build of start mislukt.'
+            echo 'Frontend build, security test of start mislukt.'
         }
     }
 }
