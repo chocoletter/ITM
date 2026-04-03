@@ -58,7 +58,7 @@ pipeline {
         stage('Smoke Test') {
             steps {
                 bat '''
-                powershell -Command "try { (Invoke-WebRequest -UseBasicParsing ''http://localhost:5000'' -TimeoutSec 10).StatusCode } catch { Write-Error $_; exit 1 }"
+                powershell -NoProfile -Command "try { (Invoke-WebRequest -UseBasicParsing 'http://localhost:5000' -TimeoutSec 10).StatusCode } catch { Write-Error $_; exit 1 }"
                 '''
             }
         }
