@@ -47,14 +47,17 @@ pipeline {
         }
 
         stage('Run App') {
-            steps {
-                dir('frontend\\EasyDevOps\\publish') {
-                    bat """
-                    set ASPNETCORE_URLS=${APP_URL}
-                    start /B dotnet WebApplication3.dll
-                    """
-                }
-            }
+    steps {
+        dir('frontend\\EasyDevOps\\publish') {
+            bat """
+            if exist app.log del app.log
+            set ASPNETCORE_URLS=http://localhost:5000
+            start /B cmd /c "dotnet WebApplication3.dll > app.log 2>&1"
+            timeout /t 5 >nul
+            """
+        }
+    }
+}
         }
     }
 
