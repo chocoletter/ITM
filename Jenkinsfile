@@ -6,20 +6,49 @@ pipeline {
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Verify .NET') {
+            steps {
+                bat 'dotnet --version'
+            }
+        }
+
+        stage('Restore') {
+            steps {
+                dir('frontend\\EasyDevOps') {
+                    bat 'dotnet restore WebApplication3.csproj'
+                }
+            }
+        }
+
         stage('Build') {
             steps {
-                echo 'Building..'
+                dir('frontend\\EasyDevOps') {
+                    bat 'dotnet build WebApplication3.csproj --configuration Release --no-restore'
+                }
             }
         }
-        stage('Test') {
+
+        stage('Publish') {
             steps {
-                echo 'Testing..'
+                dir('frontend\\EasyDevOps') {
+                    bat 'dotnet publish WebApplication3.csproj --configuration Release --output publish --no-build'
+                }
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-            }
+    }
+
+    post {
+        success {
+            echo 'Frontend build succesvol afgerond.'
+        }
+        failure {
+            echo 'Frontend build mislukt.'
         }
     }
 }
